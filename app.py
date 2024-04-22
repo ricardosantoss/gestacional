@@ -5,21 +5,25 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 
 def pagina_principal():
-    st.image("image.png", width=500)
+    st.image("/content/image.png", width=500)
     st.header('Plataforma para a Predição de Restrição Fetal', divider='blue')
-    texto = "Este site foi desenvolvido com o propósito de fornecer um suporte eficaz na detecção precoce de fetos com problemas de restrição fetal. Fundamentado no estudo 'Consensus definition of fetal growth restriction: a Delphi procedure', nosso objetivo é auxiliar médicos, profissionais de saúde e familiares no acompanhamento do desenvolvimento do bebê desde as fases iniciais. Ao incorporar os parâmetros e critérios estabelecidos neste estudo, nossos modelos e ferramentas de detecção fornecem uma abordagem fundamentada para a identificação precoce de fetos em risco de restrição fetal. Acreditamos que ao oferecer essas informações de forma acessível e compreensível, podemos ajudar a orientar as decisões clínicas e o acompanhamento adequado, contribuindo para melhores resultados de saúde materna e fetal. Estamos comprometidos em fornecer uma plataforma confiável e útil para apoiar profissionais de saúde e famílias durante essa jornada crucial de cuidados pré-natais. Explore nosso site e utilize nossos recursos para aprender mais sobre a detecção precoce de restrição fetal e como podemos trabalhar juntos para garantir o bem-estar do bebê em desenvolvimento."
+    texto = """Este site foi desenvolvido com o propósito de fornecer um suporte eficaz na detecção precoce de fetos com problemas de restrição fetal. Fundamentado no estudo <a href="https://pubmed.ncbi.nlm.nih.gov/26909664/" target="_blank">Consensus definition of fetal growth restriction: a Delphi procedure</a>, nosso objetivo é auxiliar médicos, profissionais de saúde e familiares no acompanhamento do desenvolvimento do bebê desde as fases iniciais. Ao incorporar os parâmetros e critérios estabelecidos neste estudo, nossos modelos e ferramentas de detecção fornecem uma abordagem fundamentada para a identificação precoce de fetos em risco de restrição fetal. Acreditamos que ao oferecer essas informações de forma acessível e compreensível, podemos ajudar a orientar as decisões clínicas e o acompanhamento adequado, contribuindo para melhores resultados de saúde materna e fetal. Estamos comprometidos em fornecer uma plataforma confiável e útil para apoiar profissionais de saúde e famílias durante essa jornada crucial de cuidados pré-natais. Explore nosso site e utilize nossos recursos para aprender mais sobre a detecção precoce de restrição fetal e como podemos trabalhar juntos para garantir o bem-estar do bebê em desenvolvimento."""
     st.markdown(f'<p style="text-align: justify;">{texto}</p>', unsafe_allow_html=True)
+    st.header('',divider='blue')  
+    st.markdown(
+    """
+    <footer style="text-align:center; padding: 10px;">
+    <p style="margin: 3px 0;">Desenvolvido por:</p>
+    <p style="margin: 3px 0;"><a href="http://lattes.cnpq.br/7349550255865169">Ricardo da Silva Santos</a></p>
+    <p style="margin: 3px 0;"><a href="http://lattes.cnpq.br/4432126984637506">Murilo Gleyson Gazzola</a></p>
+    <p style="margin: 3px 0;"><a href="http://lattes.cnpq.br/9505061996959409">Renato Teixeira Souza</a></p>
+    <p style="margin: 3px 0;"><a href="http://lattes.cnpq.br/1314550908170192">Cristiano Torezzan</a></p>
+    </footer>
+    """,
+    unsafe_allow_html=True
+)
 
-def pagina_resultados():
-    resultado_predicao = realizar_predicao_fetal(idade_gestacional_semanas, idade_gestacional_dias, peso_fetal, circunferencia_abdominal, IP_uterina_medida, IP_umbilical_medida, ART_umbilical_medida, RCP_medida, resposta)
-    st.markdown("<p style='color: red; font-size: 20px;'>Resultados: </p>", unsafe_allow_html=True)
-    st.write(resultado_predicao)
-    st.write("Resultado da Predição:", resultado_predicao)
-    st.pyplot(fig1)
-    st.pyplot(fig2)
-    st.pyplot(fig3)
-    st.pyplot(fig4)
-    st.pyplot(fig5)
+
 
 
 #Dados de Entrada
@@ -38,66 +42,41 @@ with st.sidebar:
 #########################################################################################################################
 #Gráfico do Peso
 
-semanas = [0,14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
-terceiro_percentil_peso = [0,78.8, 99.2, 123.9, 153.7, 189.3, 231.3, 280.6, 337.8, 403.8, 479, 564.1, 659.5, 765.2, 881.4, 1007.8, 1143.7, 1288.5, 1440.9, 1599.4, 1762.3, 1927.4, 2092.5, 2255.0, 2412.1, 2561.2, 2699.3, 2823.8, 2932.2]
-decimo_percentil_peso = [0,83.5, 105, 131.2, 162.6, 200.1, 244.4, 296.4, 356.8, 426.3, 505.7, 595.5, 696.2, 807.9, 930.7, 1064.4, 1208.3, 1361.7, 1523.4, 1691.9, 1865.2, 2041.3, 2217.8, 2391.8, 2560.7, 2721.4, 2871.1, 3006.8, 3125.9]
 
-# Interpolação usando a função interp1d do SciPy
+# Dados de entrada
+semanas = [0, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
+terceiro_percentil_peso = [0, 78.8, 99.2, 123.9, 153.7, 189.3, 231.3, 280.6, 337.8, 403.8, 479, 564.1, 659.5, 765.2, 881.4, 1007.8, 1143.7, 1288.5, 1440.9, 1599.4, 1762.3, 1927.4, 2092.5, 2255.0, 2412.1, 2561.2, 2699.3, 2823.8, 2932.2]
+decimo_percentil_peso = [0, 83.5, 105, 131.2, 162.6, 200.1, 244.4, 296.4, 356.8, 426.3, 505.7, 595.5, 696.2, 807.9, 930.7, 1064.4, 1208.3, 1361.7, 1523.4, 1691.9, 1865.2, 2041.3, 2217.8, 2391.8, 2560.7, 2721.4, 2871.1, 3006.8, 3125.9]
+
+# Interpolação
 interp_func_terceiro_peso = interp1d(semanas, terceiro_percentil_peso, kind='linear', fill_value='extrapolate')
 interp_func_decimo_peso = interp1d(semanas, decimo_percentil_peso, kind='linear', fill_value='extrapolate')
 
-# Criar um conjunto de pontos mais denso para uma curva mais suave
+# Conjunto de pontos mais denso para curvas mais suaves
 semanas_interp = np.linspace(min(semanas), max(semanas), 1000)
 terceiro_percentil_interp = interp_func_terceiro_peso(semanas_interp)
 decimo_percentil_interp = interp_func_decimo_peso(semanas_interp)
 
-# Configurar o gráfico
+# Configuração do gráfico
 fig1, ax = plt.subplots(figsize=(12, 6))
 
-# Adicionar o ponto fornecido pelo usuário ao gráfico
-ax.scatter(idade_gestacional_semanas + idade_gestacional_dias/7, peso_fetal, color='red', label='Ponto do Usuário', marker='x')
+# Gráficos das curvas interpoladas
+ax.plot(semanas_interp, terceiro_percentil_interp, label='Terceiro Percentil', linestyle='--')
+ax.plot(semanas_interp, decimo_percentil_interp, label='Décimo Percentil', linestyle='--')
 
-# Gráfico para o terceiro percentil
-ax.plot(semanas_interp, terceiro_percentil_interp, label='Terceiro Percentil (Interpolado)', linestyle='--')
+# Adiciona o ponto específico do usuário
+idade_gestacional_total_semanas = idade_gestacional_semanas + idade_gestacional_dias / 7
+ax.scatter(idade_gestacional_total_semanas, peso_fetal, color='red', label='Peso do Usuário', marker='x')
 
-# Gráfico para o décimo percentil
-ax.plot(semanas_interp, decimo_percentil_interp, label='Décimo Percentil (Interpolado)', linestyle='--')
-
-# Gráfico original
-ax.scatter(semanas, terceiro_percentil_peso, label='Terceiro Percentil', marker='o')
-ax.scatter(semanas, decimo_percentil_peso, label='Décimo Percentil', marker='o')
-
-# Configurar rótulos e título
+# Configurações dos rótulos e título
 ax.set_xlabel('Idade Gestacional (semanas)')
-ax.set_ylabel('Peso')
-ax.set_title('Crescimento Fetal - Terceiro e Décimo Percentil (com Interpolação)')
+ax.set_ylabel('Peso (gramas)')
+ax.set_title('Peso Fetal Esperado')
 ax.legend()
 
-#########################################################################################################################
-# Seus dados
-semanas = [0, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
-ip_uterina_95 = [6, 2.24, 2.11, 1.99, 1.88, 1.79, 1.70, 1.61, 1.54, 1.47, 1.41, 1.35, 1.30, 1.25, 1.21, 1.17, 1.13, 1.10, 1.06, 1.04, 1.01, 0.99, 0.97, 0.95, 0.94, 0.92, 0.91, 0.90, 0.89]
+plt.show()
 
-# Interpolação da ip_uterina_95 usando a função interp1d do SciPy
-interp_func_ip_uterina_95 = interp1d(semanas, ip_uterina_95, kind='linear', fill_value='extrapolate')
 
-# Criar um conjunto de pontos mais denso para uma curva mais suave
-semanas_interp_ip_uterina = np.linspace(min(semanas), max(semanas), 1000)
-ip_uterina_95_interp = interp_func_ip_uterina_95(semanas_interp_ip_uterina)
-
-# Configurar o gráfico
-fig2, ax = plt.subplots(figsize=(12, 6))
-
-# Adicionar pontos para a ip_uterina_95
-ax.scatter(semanas, ip_uterina_95, label='IP Uterina 95 (Pontos)', marker='o', color='red')
-
-# Gráfico para a ip_uterina_95
-ax.plot(semanas_interp_ip_uterina, ip_uterina_95_interp, label='IP Uterina 95 (Interpolado)', linestyle='--', color='orange')
-
-# Configurar rótulos e título
-ax.set_xlabel('Idade Gestacional (semanas)')
-ax.set_ylabel('IP Uterina 95')
-ax.set_title('Índice de Pulsatilidade Uterina (Interpolado)')
 ###########################################################################################################
 
 # Seus dados
@@ -118,14 +97,13 @@ decimo_percentil_interp = interp_func_decimo_ca(semanas_interp)
 fig3, ax = plt.subplots(figsize=(12, 6))
 
 # Gráfico para o terceiro percentil
-ax.plot(semanas_interp, terceiro_percentil_interp, label='Terceiro Percentil (Interpolado)', linestyle='--')
+ax.plot(semanas_interp, terceiro_percentil_interp, label='Terceiro Percentil', linestyle='--')
 
 # Gráfico para o décimo percentil
-ax.plot(semanas_interp, decimo_percentil_interp, label='Décimo Percentil (Interpolado)', linestyle='--')
+ax.plot(semanas_interp, decimo_percentil_interp, label='Décimo Percentil', linestyle='--')
 
-# Gráfico original
-ax.scatter(semanas, terceiro_percentil_circunferencia_abdominal, label='Terceiro Percentil', marker='o')
-ax.scatter(semanas, decimo_percentil_circunferencia_abdominal, label='Décimo Percentil', marker='o')
+ax.scatter(idade_gestacional_total_semanas, circunferencia_abdominal, color='red', label='Peso do Usuário', marker='x')
+
 
 # Adicionar o ponto fornecido pelo usuário ao gráfico
 ax.scatter(idade_gestacional_semanas + idade_gestacional_dias/7, circunferencia_abdominal, color='red', label='Ponto do Usuário', marker='x')
@@ -137,6 +115,36 @@ ax.set_title('Crescimento Fetal - Terceiro e Décimo Percentil (com Interpolaç�
 
 # Adicionar legenda
 ax.legend()
+##########################################################################
+
+#########################################################################################################################
+# Seus dados
+semanas = [0, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
+ip_uterina_95 = [6, 2.24, 2.11, 1.99, 1.88, 1.79, 1.70, 1.61, 1.54, 1.47, 1.41, 1.35, 1.30, 1.25, 1.21, 1.17, 1.13, 1.10, 1.06, 1.04, 1.01, 0.99, 0.97, 0.95, 0.94, 0.92, 0.91, 0.90, 0.89]
+
+# Interpolação da ip_uterina_95 usando a função interp1d do SciPy
+interp_func_ip_uterina_95 = interp1d(semanas, ip_uterina_95, kind='linear', fill_value='extrapolate')
+
+# Criar um conjunto de pontos mais denso para uma curva mais suave
+semanas_interp_ip_uterina = np.linspace(min(semanas), max(semanas), 1000)
+ip_uterina_95_interp = interp_func_ip_uterina_95(semanas_interp_ip_uterina)
+
+# Configurar o gráfico
+fig2, ax = plt.subplots(figsize=(12, 6))
+
+# Gráfico para a ip_uterina_95
+ax.plot(semanas_interp_ip_uterina, ip_uterina_95_interp, label='IP Uterina 95 (Interpolado)', linestyle='--', color='orange')
+
+# Adiciona o ponto específico do usuário
+idade_gestacional_total_semanas = idade_gestacional_semanas + idade_gestacional_dias / 7
+ax.scatter(idade_gestacional_total_semanas, IP_uterina_medida, color='red', label='Peso do Usuário', marker='x')
+
+
+# Configurar rótulos e título
+ax.set_xlabel('Idade Gestacional (semanas)')
+ax.set_ylabel('IP Uterina 95')
+ax.set_title('Índice de Pulsatilidade Uterina')
+
 ##########################################################################
 # Seus dados
 semanas_ip_umbilical = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
@@ -153,10 +161,10 @@ ip_umbilical_interp = interp_func_ip_umbilical(semanas_interp_ip_umbilical)
 fig4, ax = plt.subplots(figsize=(12, 6))
 
 # Gráfico para o índice de resistência umbilical
-ax.plot(semanas_interp_ip_umbilical, ip_umbilical_interp, label='IP Umbilical (Interpolado)', linestyle='--', color='orange')
+ax.plot(semanas_interp_ip_umbilical, ip_umbilical_interp, label='IP Umbilical', linestyle='--', color='orange')
 
-# Adicionar pontos para o índice de resistência umbilical
-ax.scatter(semanas_ip_umbilical, ip_umbilical, label='IP Umbilical (Pontos)', marker='o', color='red')
+ax.scatter(idade_gestacional_total_semanas, IP_umbilical_medida, color='red', label='Peso do Usuário', marker='x')
+
 
 # Configurar rótulos e título
 ax.set_xlabel('Idade Gestacional (semanas)')
@@ -182,15 +190,15 @@ art_umbilical_interp = interp_func_art_umbilical(semanas_interp_art_umbilical)
 fig5, ax = plt.subplots(figsize=(12, 6))
 
 # Gráfico para o índice de pulsatividade umbilical
-ax.plot(semanas_interp_art_umbilical, art_umbilical_interp, label='Art Umbilical (Interpolado)', linestyle='--', color='orange')
+ax.plot(semanas_interp_art_umbilical, art_umbilical_interp, label='Art Umbilical', linestyle='--', color='orange')
 
-# Adicionar pontos para o índice de pulsatividade umbilical
-ax.scatter(semanas_art_umbilical, art_umbilical_p95, label='Art Umbilical (Pontos)', marker='o', color='red')
+ax.scatter(idade_gestacional_total_semanas, ART_umbilical_medida, color='red', label='Peso do Usuário', marker='x')
+
 
 # Configurar rótulos e título
 ax.set_xlabel('Idade Gestacional (semanas)')
 ax.set_ylabel('Art Umbilical')
-ax.set_title('Índice de Pulsatividade Umbilical (Interpolado)')
+ax.set_title('Índice de Pulsatividade Umbilical ')
 
 # Adicionar legenda
 ax.legend()
@@ -223,6 +231,10 @@ ax.set_title('Índice de RCP - P5 (Interpolado)')
 # Adicionar legenda
 ax.legend()
 ##########################################################################
+
+
+
+############################################################################
 #ONTINHAS
 
 terceiro_percentil_interpolado_peso = interp_func_terceiro_peso(idade_gestacional_semanas + idade_gestacional_dias/7)
@@ -255,6 +267,16 @@ def realizar_predicao_fetal(idade_gestacional_semanas, idade_gestacional_dias, p
         else:
             return "Bebe normal"
 
+def pagina_resultados():
+    resultado_predicao = realizar_predicao_fetal(idade_gestacional_semanas, idade_gestacional_dias, peso_fetal, circunferencia_abdominal, IP_uterina_medida, IP_umbilical_medida, ART_umbilical_medida, RCP_medida, resposta)
+    st.markdown("<p style='color: red; font-size: 20px;'>Resultados: </p>", unsafe_allow_html=True)
+    st.write(resultado_predicao)
+    st.write("Resultado da Predição:", resultado_predicao)
+    st.pyplot(fig1)
+    st.pyplot(fig3)
+    st.pyplot(fig2)
+    st.pyplot(fig4)
+    st.pyplot(fig5)
 
 def main():
     if st.sidebar.button('Realizar Predição'):
@@ -264,3 +286,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
