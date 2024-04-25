@@ -254,16 +254,16 @@ def realizar_predicao_fetal(idade_gestacional_semanas, idade_gestacional_dias, p
     # Adicione sua lógica de predição aqui
     if idade_gestacional_semanas < 32:
         if (peso_fetal < terceiro_percentil_interpolado_peso or circunferencia_abdominal < terceiro_percentil_interpolado_ca or resposta == "Sim"):
-            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médicos"
+            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médico"
         elif ((peso_fetal < decimo_percentil_interpolado_peso or circunferencia_abdominal < decimo_percentil_interpolado_ca) and (IP_uterina_medida < interp_func_ip_uterina_95_ponto or IP_umbilical_medida > interp_func_ip_umbilical_95_ponto)):
-            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médicos"
+            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médico"
         else:
             return "O Bebe está dentro da normalidade para o período gestacional"
     else:
         if (peso_fetal < terceiro_percentil_interpolado_peso or circunferencia_abdominal < terceiro_percentil_interpolado_ca):
-            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médicos"
+            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médico"
         elif ((peso_fetal < decimo_percentil_interpolado_peso or circunferencia_abdominal < decimo_percentil_interpolado_ca) and (ART_umbilical_medida < interp_func_art_umbilical_95_ponto or RCP_medida < interp_RCP_95_ponto)):
-            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médicos."
+            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médico."
         else:
             return "O Bebe está dentro da normalidade para o período gestacional"
 
