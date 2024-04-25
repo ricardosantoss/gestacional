@@ -269,9 +269,8 @@ def realizar_predicao_fetal(idade_gestacional_semanas, idade_gestacional_dias, p
 
 def pagina_resultados():
     resultado_predicao = realizar_predicao_fetal(idade_gestacional_semanas, idade_gestacional_dias, peso_fetal, circunferencia_abdominal, IP_uterina_medida, IP_umbilical_medida, ART_umbilical_medida, RCP_medida, resposta)
-    st.markdown("<p style='color: red; font-size: 20px;'>Resultados: </p>", unsafe_allow_html=True)
-    st.write(resultado_predicao)
-    st.write("Resultado da Predição:", resultado_predicao)
+    st.markdown("<p style='color: red; font-size: 24px; font-weight: bold;'>Resultado da Predição:</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size: 20px;'>{resultado_predicao}</p>", unsafe_allow_html=True)
     st.pyplot(fig1)
     st.pyplot(fig3)
     st.pyplot(fig2)
