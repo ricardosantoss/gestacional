@@ -254,18 +254,18 @@ def realizar_predicao_fetal(idade_gestacional_semanas, idade_gestacional_dias, p
     # Adicione sua lógica de predição aqui
     if idade_gestacional_semanas < 32:
         if (peso_fetal < terceiro_percentil_interpolado_peso or circunferencia_abdominal < terceiro_percentil_interpolado_ca or resposta == "Sim"):
-            return "Bebe restrito"
+            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médicos"
         elif ((peso_fetal < decimo_percentil_interpolado_peso or circunferencia_abdominal < decimo_percentil_interpolado_ca) and (IP_uterina_medida < interp_func_ip_uterina_95_ponto or IP_umbilical_medida > interp_func_ip_umbilical_95_ponto)):
-            return "Bebe restrito"
+            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médicos"
         else:
-            return "Bebe normal"
+            return "O Bebe está dentro da normalidade para o período gestacional"
     else:
         if (peso_fetal < terceiro_percentil_interpolado_peso or circunferencia_abdominal < terceiro_percentil_interpolado_ca):
-            return "Bebe restrito"
+            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médicos"
         elif ((peso_fetal < decimo_percentil_interpolado_peso or circunferencia_abdominal < decimo_percentil_interpolado_ca) and (ART_umbilical_medida < interp_func_art_umbilical_95_ponto or RCP_medida < interp_RCP_95_ponto)):
-            return "Bebe restrito"
+            return "Algum parametro do bebê está abaixo do esperado para a idade gestacional é importante acompanhamento médicos."
         else:
-            return "Bebe normal"
+            return "O Bebe está dentro da normalidade para o período gestacional"
 
 def pagina_resultados():
     resultado_predicao = realizar_predicao_fetal(idade_gestacional_semanas, idade_gestacional_dias, peso_fetal, circunferencia_abdominal, IP_uterina_medida, IP_umbilical_medida, ART_umbilical_medida, RCP_medida, resposta)
