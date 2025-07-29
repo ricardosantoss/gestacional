@@ -17,11 +17,24 @@ def cor_ponto(valor, p3, p10):
     return 'green'
 
 # Página principal
-def pagina_principal():
+ddef pagina_principal():
     st.image("image.png", width=500)
     st.header('Plataforma para a Predição de Restrição Fetal', divider='blue')
-    texto = """Este site foi desenvolvido com base no estudo <a href="https://pubmed.ncbi.nlm.nih.gov/26909664/" target="_blank">Consensus definition of fetal growth restriction: a Delphi procedure</a>, com o objetivo de auxiliar médicos e famílias na detecção precoce de restrição fetal, por meio de parâmetros clínicos acessíveis e interpretáveis."""
+    texto = """Este site foi desenvolvido com o propósito de fornecer um suporte eficaz na detecção precoce de fetos com problemas de restrição fetal. Fundamentado no estudo <a href="https://pubmed.ncbi.nlm.nih.gov/26909664/" target="_blank">Consensus definition of fetal growth restriction: a Delphi procedure</a>, nosso objetivo é auxiliar médicos, profissionais de saúde e familiares no acompanhamento do desenvolvimento do bebê desde as fases iniciais. Ao incorporar os parâmetros e critérios estabelecidos neste estudo, nossos modelos e ferramentas de detecção fornecem uma abordagem fundamentada para a identificação precoce de fetos em risco de restrição fetal. Acreditamos que ao oferecer essas informações de forma acessível e compreensível, podemos ajudar a orientar as decisões clínicas e o acompanhamento adequado, contribuindo para melhores resultados de saúde materna e fetal. Estamos comprometidos em fornecer uma plataforma confiável e útil para apoiar profissionais de saúde e famílias durante essa jornada crucial de cuidados pré-natais. Explore nosso site e utilize nossos recursos para aprender mais sobre a detecção precoce de restrição fetal e como podemos trabalhar juntos para garantir o bem-estar do bebê em desenvolvimento."""
     st.markdown(f'<p style="text-align: justify;">{texto}</p>', unsafe_allow_html=True)
+    st.header('',divider='blue')  
+    st.markdown(
+    """
+    <footer style="text-align:center; padding: 10px;">
+    <p style="margin: 3px 0;">Desenvolvido por:</p>
+    <p style="margin: 3px 0;"><a href="http://lattes.cnpq.br/7349550255865169">Ricardo da Silva Santos</a></p>
+    <p style="margin: 3px 0;"><a href="http://lattes.cnpq.br/4432126984637506">Murilo Gleyson Gazzola</a></p>
+    <p style="margin: 3px 0;"><a href="http://lattes.cnpq.br/9505061996959409">Renato Teixeira Souza</a></p>
+    <p style="margin: 3px 0;"><a href="http://lattes.cnpq.br/1314550908170192">Cristiano Torezzan</a></p>
+    </footer>
+    """,
+    unsafe_allow_html=True
+)
 
 # Coleta de dados do usuário
 with st.sidebar:
