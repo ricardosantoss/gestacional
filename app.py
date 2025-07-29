@@ -8,9 +8,50 @@ import math
 # ─── Configuração da Página ─────────────────────────────────────────────
 st.set_page_config(
     page_title="Predição de Restrição Fetal",
-    page_icon="🤰",
     layout="wide",
 )
+
+# ─── CSS para Fonte Acadêmica ────────────────────────────────────────────
+st.markdown("""
+    <style>
+        /* Usa serif para um visual mais acadêmico */
+        html, body, [class*="css"] {
+            font-family: 'Times New Roman', serif !important;
+        }
+        /* Cabeçalhos mais discretos */
+        h1, h2, h3 {
+            color: #111;
+        }
+        /* Remove bordas coloridas */
+        .stDivider {
+            border-top: 1px solid #666 !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# ─── Função de Página Principal (Entrada Antiga) ─────────────────────────
+def pagina_principal():
+    st.image("image.png", width=400)
+    st.title("Plataforma para a Predição de Restrição Fetal")
+    texto = (
+        "Este site foi desenvolvido para auxiliar na detecção precoce de fetos "
+        "com possíveis restrições de crescimento. Baseia‑se no estudo "
+        "[Consensus definition of fetal growth restriction: a Delphi procedure]"
+        "(https://pubmed.ncbi.nlm.nih.gov/26909664/) e oferece ferramentas "
+        "fundamentadas para apoiar decisões clínicas e acompanhamento pré‑natal."
+    )
+    st.markdown(f"<p style='text-align: justify; font-size:14px;'>{texto}</p>", unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown(
+        """
+        **Desenvolvido por:**  
+        [Ricardo da Silva Santos](http://lattes.cnpq.br/7349550255865169) ·
+        [Murilo G. Gazzola](http://lattes.cnpq.br/4432126984637506) ·
+        [Renato T. Souza](http://lattes.cnpq.br/9505061996959409) ·
+        [Cristiano Torezzan](http://lattes.cnpq.br/1314550908170192)
+        """,
+        unsafe_allow_html=True
+    )
 
 # ─── Dados de Referência (percentis) ────────────────────────────────────
 @st.cache_data
@@ -50,7 +91,6 @@ P = load_percentis()
 def make_interp(sem, vals):
     return interp1d(sem, vals, kind='linear', fill_value='extrapolate', assume_sorted=True)
 
-# construir interpolações
 INTERPS = {
     param: {
         key: make_interp(P[param]['sem'], P[param][key])
@@ -59,39 +99,42 @@ INTERPS = {
     for param in P
 }
 
-# ─── Sidebar: Inputs do Paciente ─────────────────────────────────────────
+# ─── Sidebar: Dados do Paciente ────────────────────────────────────────
 with st.sidebar:
     st.header("Dados do Paciente")
-    ig_sem = st.number_input("Semanas de Gestação", min_value=0, max_value=42, value=20)
-    ig_dias = st.number_input("Dias (0–6)", min_value=0, max_value=6, value=0)
-    peso = st.number_input("Peso Fetal (g)", min_value=0.0, format="%.1f")
-    circ_abd = st.number_input("Circunferência Abdominal (cm)", min_value=0.0, format="%.1f")
-    ip_ut = st.number_input("IP Uterina", min_value=0.0, format="%.2f")
-    ip_um = st.number_input("IP Umbilical", min_value=0.0, format="%.2f")
-    art_um = st.number_input("Art. Umbilical", min_value=0.0, format="%.2f")
-    rcp   = st.number_input("RCP", min_value=0.0, format="%.2f")
+    ig_sem  = st.number_input("Semanas de Gestação", 0, 42, 20)
+    ig_dias = st.number_input("Dias (0–6)", 0, 6, 0)
+    peso    = st.number_input("Peso Fetal (g)", 0.0, format="%.1f")
+    circ_abd= st.number_input("Circunferência Abdominal (cm)", 0.0, format="%.1f")
+    ip_ut   = st.number_input("IP Uterina", 0.0, format="%.2f")
+    ip_um   = st.number_input("IP Umbilical", 0.0, format="%.2f")
+    art_um  = st.number_input("Art. Umbilical", 0.0, format="%.2f")
+    rcp     = st.number_input("RCP", 0.0, format="%.2f")
     diast_zero = st.selectbox("Diástole Zero no Doppler Umb.", ["Não","Sim"])
+    # Hadlock inputs opcionais
+    st.subheader("Fórmula Hadlock (opcional)")
+    BPD = st.number_input("BPD (mm)", 0.0, format="%.1f")
+    HC  = st.number_input("HC (mm)", 0.0, format="%.1f")
+    FL  = st.number_input("FL (mm)", 0.0, format="%.1f")
 
-# ─── Cálculo do Estimated Fetal Weight (Hadlock) ─────────────────────────
-BPD = st.sidebar.number_input("BPD (mm)", min_value=0.0, format="%.1f")
-HC  = st.sidebar.number_input("HC (mm)", min_value=0.0, format="%.1f")
-FL  = st.sidebar.number_input("FL (mm)", min_value=0.0, format="%.1f")
-# fórmula Hadlock 1
-efw = math.exp(1.3596 + 0.0064*HC + 0.0424*circ_abd + 0.174*FL + 0.00061*BPD*circ_abd - 0.00386*circ_abd*FL)
+# ─── Cálculo do Estimated Fetal Weight (Hadlock) ────────────────────────
+efw = math.exp(
+    1.3596 + 0.0064*HC + 0.0424*circ_abd + 0.174*FL
+    + 0.00061*BPD*circ_abd - 0.00386*circ_abd*FL
+)
 
-# ─── Função de Predição ───────────────────────────────────────────────────
+# ─── Função de Predição ────────────────────────────────────────────────
 def predicao_rciu(ig, peso, circ, ip_ut, ip_um, art_um, rcp, diast_zero):
     idade = ig + ig_dias/7
     early = idade < 32
-    # interpolados
     p3_peso = INTERPS["peso"]["p3"](idade)
-    p10_peso = INTERPS["peso"]["p10"](idade)
-    p3_ca = INTERPS["circunf_abd"]["p3"](idade)
-    p10_ca = INTERPS["circunf_abd"]["p10"](idade)
-    p95_ut = INTERPS["IP_uterina"]["p95"](idade)
-    p95_u  = INTERPS["IP_umbilical"]["p95"](idade)
-    p95_au = INTERPS["ART_umbilical"]["p95"](idade)
-    p5_rcp = INTERPS["RCP"]["p5"](idade)
+    p10_peso= INTERPS["peso"]["p10"](idade)
+    p3_ca   = INTERPS["circunf_abd"]["p3"](idade)
+    p10_ca  = INTERPS["circunf_abd"]["p10"](idade)
+    p95_ut  = INTERPS["IP_uterina"]["p95"](idade)
+    p95_u   = INTERPS["IP_umbilical"]["p95"](idade)
+    p95_au  = INTERPS["ART_umbilical"]["p95"](idade)
+    p5_rcp  = INTERPS["RCP"]["p5"](idade)
     risco = False
 
     if early:
@@ -107,76 +150,64 @@ def predicao_rciu(ig, peso, circ, ip_ut, ip_um, art_um, rcp, diast_zero):
 
     return risco
 
-# ─── Interface Principal ─────────────────────────────────────────────────
-st.title("📊 Plataforma de Predição de RCIU")
-if st.button("Realizar Predição"):
+# ─── Lógica Principal ─────────────────────────────────────────────────
+if st.sidebar.button("Realizar Predição"):
     risco = predicao_rciu(ig_sem, peso, circ_abd, ip_ut, ip_um, art_um, rcp, diast_zero)
-    status = "🚨 Alto Risco" if risco else "✅ Dentro da Normalidade"
-    st.metric(label="Status RCIU", value=status)
+    if risco:
+        st.warning("⚠️ Alto Risco de RCIU – acompanhamento médico recomendado")
+    else:
+        st.success("✅ Dentro dos parâmetros esperados para a idade gestacional")
 
     idade_total = ig_sem + ig_dias/7
-    # ─── Gráficos em Tabs ──────────────────────────────
-    tab1, tab2, tab3 = st.tabs(["Peso Fetal", "Circunferência Abd.", "Doppler"])
+    sem = np.linspace(0, 41, 500)
+
+    tab1, tab2, tab3 = st.tabs(["Peso Fetal", "Circ. Abdominal", "Doppler"])
     with tab1:
         fig, ax = plt.subplots()
-        sem = np.linspace(0,41,500)
         ax.plot(sem, INTERPS["peso"]["p3"](sem), "--", label="P3")
         ax.plot(sem, INTERPS["peso"]["p10"](sem),"--", label="P10")
-        ax.scatter(idade_total, peso, color="red", label="Você")
-        ax.set_xlabel("Semanas")
+        ax.scatter(idade_total, peso, color="black", label="Paciente")
+        ax.set_xlabel("Semanas de Gestação")
         ax.set_ylabel("Peso (g)")
         ax.legend()
         st.pyplot(fig)
+
     with tab2:
         fig, ax = plt.subplots()
         ax.plot(sem, INTERPS["circunf_abd"]["p3"](sem),"--", label="P3")
         ax.plot(sem, INTERPS["circunf_abd"]["p10"](sem),"--", label="P10")
-        ax.scatter(idade_total, circ_abd, color="red", label="Você")
-        ax.set_xlabel("Semanas")
+        ax.scatter(idade_total, circ_abd, color="black", label="Paciente")
+        ax.set_xlabel("Semanas de Gestação")
         ax.set_ylabel("Circunferência (cm)")
         ax.legend()
         st.pyplot(fig)
+
     with tab3:
         fig, ax = plt.subplots()
         ax.plot(sem, INTERPS["IP_uterina"]["p95"](sem), "--", label="IP Uterina P95")
         ax.plot(sem, INTERPS["IP_umbilical"]["p95"](sem),"--", label="IP Umbilical P95")
-        ax.plot(sem, INTERPS["ART_umbilical"]["p95"](sem),"--", label="Art. Umb. P95")
+        ax.plot(sem, INTERPS["ART_umbilical"]["p95"](sem),"--", label="Art. Umb P95")
         ax.plot(sem, INTERPS["RCP"]["p5"](sem),      "--", label="RCP P5")
-        ax.scatter(idade_total, ip_ut,   color="blue",  label="IP Uterina")
-        ax.scatter(idade_total, ip_um,   color="orange",label="IP Umbilical")
-        ax.scatter(idade_total, art_um,  color="green", label="Art. Umb.")
-        ax.scatter(idade_total, rcp,     color="red",   label="RCP")
-        ax.set_xlabel("Semanas")
-        ax.set_ylabel("Índices Doppler")
+        ax.scatter(idade_total, ip_ut, color="black",   label="IP Uterina")
+        ax.scatter(idade_total, ip_um, color="black",   label="IP Umbilical")
+        ax.scatter(idade_total, art_um, color="black",  label="Art. Umb.")
+        ax.scatter(idade_total, rcp, color="black",     label="RCP")
+        ax.set_xlabel("Semanas de Gestação")
+        ax.set_ylabel("Valores Doppler")
         ax.legend()
         st.pyplot(fig)
 
-    # ─── Tabela Resumo ────────────────────────────────
     df_resumo = pd.DataFrame([
         ["Peso (g)", peso, f"P3={INTERPS['peso']['p3'](idade_total):.1f}, P10={INTERPS['peso']['p10'](idade_total):.1f}"],
-        ["CA (cm)", circ_abd, f"P3={INTERPS['circunf_abd']['p3'](idade_total):.1f}, P10={INTERPS['circunf_abd']['p10'](idade_total):.1f}"],
+        ["Circunf. Abd (cm)", circ_abd, f"P3={INTERPS['circunf_abd']['p3'](idade_total):.1f}, P10={INTERPS['circunf_abd']['p10'](idade_total):.1f}"],
         ["IP Uterina", ip_ut, f"P95={INTERPS['IP_uterina']['p95'](idade_total):.2f}"],
         ["IP Umbilical", ip_um, f"P95={INTERPS['IP_umbilical']['p95'](idade_total):.2f}"],
         ["Art. Umb.", art_um, f"P95={INTERPS['ART_umbilical']['p95'](idade_total):.2f}"],
         ["RCP", rcp, f"P5={INTERPS['RCP']['p5'](idade_total):.2f}"],
-        ["EFW (g)", efw, "Hadlock formula"],
+        ["EFW (Hadlock)", efw, "Estimado via fórmula"]
     ], columns=["Parâmetro", "Valor", "Referência"])
     st.dataframe(df_resumo, use_container_width=True)
-    st.download_button(
-        "📥 Exportar CSV", df_resumo.to_csv(index=False), "resumo_rciu.csv", "text/csv"
-    )
+    st.download_button("Exportar CSV", df_resumo.to_csv(index=False), "resumo_fetal.csv", "text/csv")
 
 else:
-    st.write("---")
-    st.header("Bem‑vindo à Plataforma de Predição de RCIU")
-    st.markdown(
-        """
-        Este aplicativo usa os critérios do estudo
-        [Consensus definition of fetal growth restriction: a Delphi procedure](https://pubmed.ncbi.nlm.nih.gov/26909664/)
-        para avaliar o risco de restrição de crescimento fetal.
-        Insira os dados ao lado e clique em **Realizar Predição**.
-        """
-    )
-
-
-
+    pagina_principal()
